@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import {useSelector,useDispatch} from 'react-redux';
-
+import Loader from "./Loader"; 
+import {Circles} from 'react-loader-spinner';
 function App() {
   const dispatch=useDispatch();
 
@@ -21,7 +22,9 @@ function App() {
     dispatch({type:"ADDPROFILE",payload:user});
           
   }
-  
+  const delay = ms => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
   useEffect(() => {
     const getComments = async () => {
       const res = await fetch(
@@ -35,6 +38,8 @@ function App() {
       setItems(data.data);
       console.log(data.data);
         data.data.map(dispatchuserprofiles);
+        await delay(500);
+        setloading(false);
         
     };
 
@@ -73,19 +78,27 @@ function App() {
      setProfile(commentsFormServer.data);
 
   };
-  <Card style={{ width: '18rem' }}>
-  <Card.Img variant="top" class="rounded" src={profile.avatar} />
-  <Card.Body>
-    <Card.Title>NAME: {profile.first_name} {profile.last_name}</Card.Title>
-    <Card.Text>
-      USER INFO
-    </Card.Text>
-   Email:{profile.email} \n
-   ID:{profile.id}
-  </Card.Body>
-</Card>
+ 
   return (
-    <div className="container">
+   
+
+   <>
+      {loading && <div className='container'>
+<Circles
+  height="80"
+  width="80"
+  color="#4fa94d"
+  ariaLabel="circles-loading"
+  wrapperStyle={{}}
+  wrapperClass=""
+  visible={true}
+/> 
+</div>
+
+}
+    
+  
+   { !loading &&   <div className="container">
       <div className="row m-2">
         <div >
       <Card style={{ width: '18rem' }}>
@@ -127,7 +140,9 @@ function App() {
         breakLinkClassName={"page-link"}
         activeClassName={"active"}
       />
-    </div>
+    </div>}
+    </>
+  
   );
 }
 
